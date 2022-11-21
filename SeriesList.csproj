@@ -28,13 +28,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\MediaInfoHelper\MediaInfoHelper\VideoInfo.cs">
-      <Link>VideoInfo.cs</Link>
-    </Compile>
     <Compile Include="SeriesList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DoenaSoft.MediaInfoHelper">
+      <Version>2.0.4</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y SeriesList.* "N:\Fresh Downloads\!Tools"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y *.dll "N:\Fresh Downloads\!Tools"
+xcopy /y *.pdb "N:\Fresh Downloads\!Tools"
+xcopy /y *.exe "N:\Fresh Downloads\!Tools"</PostBuildEvent>
   </PropertyGroup>
 </Project>

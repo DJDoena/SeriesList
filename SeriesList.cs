@@ -1,20 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-
 namespace DoenaSoft.SeriesList
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Xml.Serialization;
+    using MediaInfoHelper;
+
     public static class SeriesList
     {
         private static readonly XmlSerializer _serializer;
 
         static SeriesList()
         {
-            _serializer = new XmlSerializer(typeof(MediaInfoHelper.Doc));
+            _serializer = new XmlSerializer(typeof(Doc));
         }
 
         public static void Main()
@@ -153,10 +154,8 @@ namespace DoenaSoft.SeriesList
 
             var languages = tasks
                 .SelectMany(t => t.Result)
-                .Where(l => !string.IsNullOrEmpty(l))
-                .Select(StandardizeLanguage)
-                .Distinct()
-                .OrderBy(GetLanguageWeight)
+                .StandardizeLanguage()
+                .OrderBy(LanguageExtensions.GetLanguageWeight)
                 .ToList();
 
             var text = string.Empty;
@@ -179,7 +178,7 @@ namespace DoenaSoft.SeriesList
             {
                 using (var fs = new FileStream(infoFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    var doc = (DoenaSoft.MediaInfoHelper.Doc)_serializer.Deserialize(fs);
+                    var doc = (Doc)_serializer.Deserialize(fs);
 
                     var languages = doc.VideoInfo?.Audio?.Select(a => a.Language) ?? Enumerable.Empty<string>();
 
@@ -250,76 +249,6 @@ namespace DoenaSoft.SeriesList
                 }
 
                 title += split[splitIndex] + " ";
-            }
-        }
-
-        private static int GetLanguageWeight(string language)
-        {
-            switch (language.ToLower())
-            {
-                case "de":
-                    {
-                        return 1;
-                    }
-                case "en":
-                    {
-                        return 2;
-                    }
-                case "es":
-                    {
-                        return 3;
-                    }
-                case "ar":
-                    {
-                        return 4;
-                    }
-                default:
-                    {
-                        return 5;
-                    }
-            }
-        }
-
-        private static string StandardizeLanguage(string language)
-        {
-            switch (language.ToLower())
-            {
-                case "de":
-                case "deu":
-                case "ger":
-                    {
-                        return "de";
-                    }
-                case "en":
-                case "eng":
-                    {
-                        return "en";
-                    }
-                case "ar":
-                case "ara":
-                    {
-                        return "ar";
-                    }
-                case "es":
-                case "spa":
-                    {
-                        return "es";
-                    }
-                case "ja":
-                case "jap":
-                case "jpn":
-                    {
-                        return "ja";
-                    }
-                case "ko":
-                case "kor":
-                    {
-                        return "ko";
-                    }
-                default:
-                    {
-                        return language.ToLower();
-                    }
             }
         }
     }
