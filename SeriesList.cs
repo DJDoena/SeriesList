@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using DoenaSoft.MediaInfoHelper.DataObjects.VideoMetaXml;
 using DoenaSoft.MediaInfoHelper.Helpers;
 
@@ -12,13 +11,6 @@ namespace DoenaSoft.SeriesList
 {
     public static class SeriesList
     {
-        private static readonly XmlSerializer _serializer;
-
-        static SeriesList()
-        {
-            _serializer = new XmlSerializer(typeof(Doc));
-        }
-
         public static void Main()
         {
             //System.Diagnostics.Debugger.Launch();
@@ -179,7 +171,7 @@ namespace DoenaSoft.SeriesList
             {
                 using (var fs = new FileStream(infoFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    var doc = (Doc)_serializer.Deserialize(fs);
+                    var doc = XmlSerializer<VideoInfoDocument>.Deserialize(fs);
 
                     var languages = doc.VideoInfo?.Audio?.Select(a => a.Language) ?? Enumerable.Empty<string>();
 
