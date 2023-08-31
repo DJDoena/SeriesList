@@ -1,48 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2D3C7366-5A79-4097-8E96-7587959DC332}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>SeriesList</RootNamespace>
-    <AssemblyName>SeriesList</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="SeriesList.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="DoenaSoft.MediaInfoHelper">
-      <Version>3.0.3</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /y *.dll "N:\Fresh Downloads\!Tools"
-xcopy /y *.pdb "N:\Fresh Downloads\!Tools"
-xcopy /y *.exe "N:\Fresh Downloads\!Tools"</PostBuildEvent>
-  </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net481</TargetFrameworks>
+		<Platforms>x64</Platforms>
+		<Configurations>Debug</Configurations>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>SeriesList</RootNamespace>
+		<AssemblyName>SeriesList</AssemblyName>
+	</PropertyGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="set sourceDir=bin\$(Platform)\$(Configuration)\$(TargetFramework)&#xD;&#xA;&#xD;&#xA;xcopy /y %25sourceDir%25\*.dll &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.pdb &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.exe &quot;N:\Fresh Downloads\!Tools&quot;" />
+	</Target>
+
+	<ItemGroup>
+	  <PackageReference Include="DoenaSoft.MediaInfoHelper" Version="3.1.0" />
+	</ItemGroup>
+	
 </Project>
