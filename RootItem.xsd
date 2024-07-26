@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="RootItem" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified">
+	<!-- xsd.exe RootItem.xsd /c /l:cs /f /n:DoenaSoft.SeriesList.Xml -->
+	
+	<xs:element name="RootItem" type="RootItem" />
+
+	<xs:complexType name="RootItem">
+		<xs:sequence>
+			<xs:element name="Series" type="Series" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>	
+
+	<xs:complexType name="Series">
+		<xs:sequence>
+			<xs:element name="Season" type="Season" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="Name" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="Season">
+		<xs:sequence>
+			<xs:element name="FullPath" type="xs:string" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Name" type="xs:string" use="required"/>
+		<xs:attribute name="Languages" type="xs:string" use="optional"/>
+	</xs:complexType>
+</xs:schema>

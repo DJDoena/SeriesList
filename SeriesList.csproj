@@ -1,22 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net481</TargetFrameworks>
-		<Platforms>x64</Platforms>
 		<Configurations>Debug</Configurations>
 		<OutputType>Exe</OutputType>
-		<RootNamespace>SeriesList</RootNamespace>
+		<TargetFramework>net481</TargetFramework>
+		<RootNamespace>DoenaSoft.SeriesList</RootNamespace>
 		<AssemblyName>SeriesList</AssemblyName>
+		<PlatformTarget>x64</PlatformTarget>
+		<Platforms>x64</Platforms>
+		<ImplicitUsings>true</ImplicitUsings>
+		<LangVersion>11.0</LangVersion>
 		<Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>
 		<FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</FileVersion>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Update="RootItem.NotGenerated.cs">
+			<DependentUpon>RootItem.xsd</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="set sourceDir=bin\$(Platform)\$(Configuration)\$(TargetFramework)&#xD;&#xA;&#xD;&#xA;xcopy /y %25sourceDir%25\*.dll &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.pdb &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.exe &quot;N:\Fresh Downloads\!Tools&quot;" />
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="DoenaSoft.MediaInfoHelper" Version="3.1.2" />
+		<PackageReference Include="DoenaSoft.MediaInfoHelper" Version="3.1.5" />
 	</ItemGroup>
 
 </Project>
