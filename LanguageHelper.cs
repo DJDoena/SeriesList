@@ -1,5 +1,6 @@
 ﻿using DoenaSoft.MediaInfoHelper.DataObjects.VideoMetaXml;
 using DoenaSoft.MediaInfoHelper.Helpers;
+using DoenaSoft.ToolBox.Generics;
 
 namespace DoenaSoft.SeriesList;
 
