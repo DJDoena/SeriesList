@@ -8,7 +8,7 @@
 		<Platforms>x64</Platforms>
 		<Configurations>Debug</Configurations>
 		<ImplicitUsings>true</ImplicitUsings>
-		<LangVersion>11.0</LangVersion>
+		<LangVersion>latest</LangVersion>
 		<Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>
 		<FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</FileVersion>
 	</PropertyGroup>
