@@ -5,7 +5,7 @@
 		<RootNamespace>DoenaSoft.SeriesList</RootNamespace>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net481</TargetFramework>
-		<Platforms>x64</Platforms>
+		<Platforms>AnyCPU</Platforms>
 		<Configurations>Debug</Configurations>
 		<ImplicitUsings>true</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
@@ -20,11 +20,11 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="set sourceDir=bin\$(Platform)\$(Configuration)\$(TargetFramework)&#xD;&#xA;&#xD;&#xA;xcopy /y %25sourceDir%25\*.dll &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.pdb &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.exe &quot;N:\Fresh Downloads\!Tools&quot;" />
+		<Exec Command="set sourceDir=bin\$(Configuration)\$(TargetFramework)&#xD;&#xA;&#xD;&#xA;xcopy /y %25sourceDir%25\*.dll &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.pdb &quot;N:\Fresh Downloads\!Tools&quot;&#xD;&#xA;xcopy /y %25sourceDir%25\*.exe &quot;N:\Fresh Downloads\!Tools&quot;" />
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="DoenaSoft.MediaInfoHelper" Version="3.1.10" />
+		<PackageReference Include="DoenaSoft.MediaInfoHelper" Version="3.1.12" />
 	</ItemGroup>
 
 </Project>
