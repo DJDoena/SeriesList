@@ -21,11 +21,17 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="set sourceDir=bin\$(Configuration)\$(TargetFramework)&#xD;&#xA;set targetDir=&quot;N:\Fresh Downloads\!Tools\SeriesList&quot;&#xD;&#xA;&#xD;&#xA;md %25targetDir%25&#xD;&#xA;xcopy /y %25sourceDir%25\*.dll %25targetDir%25&#xD;&#xA;xcopy /y %25sourceDir%25\*.pdb %25targetDir%25&#xD;&#xA;xcopy /y %25sourceDir%25\*.exe %25targetDir%25" />
+		<Exec Command="call copy.cmd bin\$(Configuration)\$(TargetFramework)" />
 	</Target>
 
 	<ItemGroup>
 		<PackageReference Include="DoenaSoft.MediaInfoHelper" Version="3.2.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="copy.cmd">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
