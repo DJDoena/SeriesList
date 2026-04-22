@@ -1,10 +1,18 @@
-﻿using DoenaSoft.SeriesList.Xml;
+﻿using DoenaSoft.SeriesList.Configuration;
+using DoenaSoft.SeriesList.Xml;
 
 namespace DoenaSoft.SeriesList;
 
-public static class Cleaner
+public class Cleaner
 {
-    public static void Clean(RootItem rootItem)
+    private readonly SeriesListConfiguration _configuration;
+
+    public Cleaner(SeriesListConfiguration configuration)
+    {
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
+
+    public void Clean(RootItem rootItem)
     {
         if (!Clean(ref rootItem.Series))
         {
@@ -12,7 +20,7 @@ public static class Cleaner
         }
     }
 
-    private static bool Clean(ref List<Series> seriesList)
+    private bool Clean(ref List<Series> seriesList)
     {
         if (seriesList != null && seriesList.Count == 0)
         {
@@ -34,7 +42,7 @@ public static class Cleaner
         }
     }
 
-    private static bool Clean(ref List<Season> seasonList)
+    private bool Clean(ref List<Season> seasonList)
     {
         if (seasonList != null && seasonList.Count == 0)
         {
@@ -46,13 +54,9 @@ public static class Cleaner
         {
             foreach (var season in seasonList)
             {
-                var path = season.FullPath;
-
-                if (!string.IsNullOrEmpty(path) && path.StartsWith(@"N:\", StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrEmpty(season.FullPath))
                 {
-                    var cleanedPath = path.Substring(2).Replace("\\", "/").TrimEnd('/') + "/";
-
-                    season.FullPath = cleanedPath;
+                    season.FullPath = _configuration.CleanPath(season.FullPath);
                 }
             }
 

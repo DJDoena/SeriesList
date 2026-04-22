@@ -1,13 +1,21 @@
 ﻿using System.Collections.Concurrent;
+using DoenaSoft.SeriesList.Configuration;
 
 namespace DoenaSoft.SeriesList;
 
-public static class FolderGetter
+public class FolderGetter
 {
-    public static Dictionary<SeriesKey, List<SeriesValue>> Get(params string[] roots)
+    private readonly SeriesListConfiguration _configuration;
+
+    public FolderGetter(SeriesListConfiguration configuration)
+    {
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
+
+    public Dictionary<SeriesKey, List<SeriesValue>> Get()
     {
         var folderInfosLists = new BlockingCollection<List<KeyValuePair<SeriesKey, SeriesValue>>>();
-        Parallel.ForEach(roots, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, root =>
+        Parallel.ForEach(_configuration.RootPaths, new ParallelOptions() { MaxDegreeOfParallelism = _configuration.MaxDegreeOfParallelism }, root =>
         {
             var subResult = TryGet(root);
 
@@ -35,18 +43,18 @@ public static class FolderGetter
         return folders;
     }
 
-    private static List<KeyValuePair<SeriesKey, SeriesValue>> TryGet(string root)
+    private List<KeyValuePair<SeriesKey, SeriesValue>> TryGet(string root)
         => Directory.Exists(root)
             ? [.. ExecuteGet(root)]
             : new(0);
 
-    private static IEnumerable<KeyValuePair<SeriesKey, SeriesValue>> ExecuteGet(string root)
+    private IEnumerable<KeyValuePair<SeriesKey, SeriesValue>> ExecuteGet(string root)
     {
         var folderNames = Directory.GetDirectories(root, "*.*", SearchOption.AllDirectories);
 
         foreach (var folderName in folderNames)
         {
-            if (!folderName.Contains("Season ") && !folderName.Contains("Staffel "))
+            if (!ContainsSeasonPattern(folderName))
             {
                 continue;
             }
@@ -63,6 +71,19 @@ public static class FolderGetter
 
             yield return new(key, value);
         }
+    }
+
+    private bool ContainsSeasonPattern(string folderName)
+    {
+        foreach (var pattern in _configuration.SeasonFolderPatterns)
+        {
+            if (folderName.Contains(pattern))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool EndsWithNumber(string folder)

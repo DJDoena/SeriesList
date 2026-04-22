@@ -1,55 +1,45 @@
-﻿using System.Collections.Concurrent;
-using DoenaSoft.MediaInfoHelper.DataObjects.VideoMetaXml;
+﻿using DoenaSoft.MediaInfoHelper.DataObjects.VideoMetaXml;
 using DoenaSoft.MediaInfoHelper.Helpers;
-using DoenaSoft.SeriesList.Xml;
+using DoenaSoft.SeriesList.Configuration;
 using DoenaSoft.ToolBox.Generics;
+using System.Collections.Concurrent;
 
 namespace DoenaSoft.SeriesList;
 
-public static class LanguageHelper
+public class LanguageHelper
 {
-    private static readonly object _lock;
+    private readonly SeriesListConfiguration _configuration;
 
-    static LanguageHelper()
+    public LanguageHelper(SeriesListConfiguration configuration)
     {
-        _lock = new();
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public static void EnrichLanguages(Xml.RootItem rootItem)
+    public void EnrichLanguages(Xml.RootItem rootItem)
     {
         var seasonsByDrive = (rootItem?.Series ?? [])
             .SelectMany(s => s.Season ?? [])
-            .GroupBy(s => GetDrive(s.FullPath));
+            .GroupBy(s => _configuration.GetPathSegmentForGrouping(s.FullPath));
 
-        Parallel.ForEach(seasonsByDrive, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, GetLanguages);
+        Parallel.ForEach(seasonsByDrive, new ParallelOptions() { MaxDegreeOfParallelism = _configuration.MaxDegreeOfParallelism }, this.GetLanguages);
     }
 
-    private static void GetLanguages(IEnumerable<Season> seasons)
+    private void GetLanguages(IEnumerable<Xml.Season> seasons)
     {
         foreach (var season in seasons)
         {
-            lock (_lock)
-            {
-                Console.WriteLine(season.FullPath);
-            }
+            _configuration.Feedback(season.FullPath);
 
-            season.Languages = GetLanguages(season.FullPath);
+            season.Languages = this.GetLanguages(season.FullPath);
         }
     }
 
-    private static string GetDrive(string fullPath)
-    {
-        var split = fullPath.Split('\\');
-
-        return split[1];
-    }
-
-    private static string GetLanguages(string folder)
+    private string GetLanguages(string folder)
     {
         var files = Directory.GetFiles(folder, "*.xml", SearchOption.AllDirectories);
 
         var languagesLists = new BlockingCollection<List<string>>();
-        Parallel.ForEach(files, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, file =>
+        Parallel.ForEach(files, new ParallelOptions() { MaxDegreeOfParallelism = _configuration.MaxDegreeOfParallelism }, file =>
         {
             var subResult = TryAddLanguages(file);
 
@@ -89,11 +79,11 @@ public static class LanguageHelper
 
             var languages = doc.VideoInfo?.Audio?.Select(a => a.Language) ?? Enumerable.Empty<string>();
 
-            return languages.ToList();
+            return [.. languages];
         }
         catch
         {
-            return new List<string>(0);
+            return [];
         }
     }
 }
