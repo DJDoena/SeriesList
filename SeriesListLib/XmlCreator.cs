@@ -3,7 +3,7 @@ using DoenaSoft.SeriesList.Xml;
 
 namespace DoenaSoft.SeriesList;
 
-internal static class XmlCreator
+public static class XmlCreator
 {
     private static readonly IComparer<string> _comparer;
 
@@ -12,7 +12,7 @@ internal static class XmlCreator
         _comparer = new HumanComparer();
     }
 
-    internal static RootItem Create(Dictionary<SeriesKey, List<SeriesValue>> source)
+    public static RootItem Create(Dictionary<SeriesKey, List<SeriesValue>> source)
     {
         var sortedSeries = source.ToList();
 

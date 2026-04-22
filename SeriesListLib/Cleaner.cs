@@ -2,9 +2,9 @@
 
 namespace DoenaSoft.SeriesList;
 
-internal static class Cleaner
+public static class Cleaner
 {
-    internal static void Clean(RootItem rootItem)
+    public static void Clean(RootItem rootItem)
     {
         if (!Clean(ref rootItem.Series))
         {

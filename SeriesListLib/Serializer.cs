@@ -3,9 +3,9 @@ using DoenaSoft.ToolBox.Generics;
 
 namespace DoenaSoft.SeriesList;
 
-internal static class Serializer
+public static class Serializer
 {
-    internal static void Serialize(RootItem rootItem, string fileName)
+    public static void Serialize(RootItem rootItem, string fileName)
     {
         (new XsltSerializer<RootItem>(new RootItemXsltSerializerDataProvider())).Serialize(fileName, rootItem);
 

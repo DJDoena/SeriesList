@@ -4,7 +4,7 @@ Console.WriteLine(typeof(Program).Assembly.GetName().Version);
 
 try
 {
-    var folders = FolderGetter.Get();
+    var folders = FolderGetter.Get([@"N:\Drive1\TVShows\", @"N:\Drive2\TVShows\", @"N:\Drive3\TVShows\", @"N:\Drive4\TVShows\"]);
 
     var rootItem = XmlCreator.Create(folders);
 

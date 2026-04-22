@@ -3,7 +3,7 @@
 namespace DoenaSoft.SeriesList;
 
 [DebuggerDisplay("{Season}")]
-internal sealed class SeriesValue
+public sealed class SeriesValue
 {
     public string Season { get; }
 

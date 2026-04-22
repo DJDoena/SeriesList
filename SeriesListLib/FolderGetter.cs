@@ -1,22 +1,21 @@
-﻿namespace DoenaSoft.SeriesList;
+﻿using System.Collections.Concurrent;
 
-internal static class FolderGetter
+namespace DoenaSoft.SeriesList;
+
+public static class FolderGetter
 {
-    internal static Dictionary<SeriesKey, List<SeriesValue>> Get()
+    public static Dictionary<SeriesKey, List<SeriesValue>> Get(params string[] roots)
     {
-        var roots = new[] { @"N:\Drive1\TVShows\", @"N:\Drive2\TVShows\", @"N:\Drive3\TVShows\", @"N:\Drive4\TVShows\" };
-
-        var tasks = new List<Task<List<KeyValuePair<SeriesKey, SeriesValue>>>>();
-
-        foreach (var root in roots)
+        var folderInfosLists = new BlockingCollection<List<KeyValuePair<SeriesKey, SeriesValue>>>();
+        Parallel.ForEach(roots, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, root =>
         {
-            tasks.Add(Task.Run(() => TryGet(root)));
-        }
+            var subResult = TryGet(root);
 
-        Task.WaitAll(tasks.ToArray());
+            folderInfosLists.Add(subResult);
+        });
 
-        var folderInfos = tasks
-            .SelectMany(t => t.Result)
+        var folderInfos = folderInfosLists
+            .SelectMany(fi => fi)
             .ToList();
 
         var folders = new Dictionary<SeriesKey, List<SeriesValue>>(folderInfos.Count);
@@ -25,7 +24,7 @@ internal static class FolderGetter
         {
             if (!folders.TryGetValue(folderInfo.Key, out var value))
             {
-                value = new List<SeriesValue>();
+                value = [];
 
                 folders.Add(folderInfo.Key, value);
             }
@@ -38,7 +37,7 @@ internal static class FolderGetter
 
     private static List<KeyValuePair<SeriesKey, SeriesValue>> TryGet(string root)
         => Directory.Exists(root)
-            ? ExecuteGet(root).ToList()
+            ? [.. ExecuteGet(root)]
             : new(0);
 
     private static IEnumerable<KeyValuePair<SeriesKey, SeriesValue>> ExecuteGet(string root)
@@ -68,8 +67,16 @@ internal static class FolderGetter
 
     private static bool EndsWithNumber(string folder)
     {
-        var endsWithNumber = folder.EndsWith("0") || folder.EndsWith("1") || folder.EndsWith("2") || folder.EndsWith("3") || folder.EndsWith("4")
-            || folder.EndsWith("5") || folder.EndsWith("6") || folder.EndsWith("7") || folder.EndsWith("8") || folder.EndsWith("9");
+        var endsWithNumber = folder.EndsWith("0")
+            || folder.EndsWith("1")
+            || folder.EndsWith("2")
+            || folder.EndsWith("3")
+            || folder.EndsWith("4")
+            || folder.EndsWith("5")
+            || folder.EndsWith("6")
+            || folder.EndsWith("7")
+            || folder.EndsWith("8")
+            || folder.EndsWith("9");
 
         if (endsWithNumber && (folder.EndsWith("mp4") || folder.EndsWith("mp3")))
         {

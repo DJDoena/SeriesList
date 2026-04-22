@@ -2,5 +2,6 @@
   <Configurations>
     <BuildType Name="Debug" />
   </Configurations>
-  <Project Path="SeriesList.csproj" />
+  <Project Path="SeriesListLib/SeriesListLib.csproj" Id="881b8b9b-a242-4060-8028-4546c6db8ca1" />
+  <Project Path="SeriesList\SeriesList.csproj" />
 </Solution>

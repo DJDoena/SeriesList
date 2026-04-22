@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>SeriesList</AssemblyName>
+		<RootNamespace>DoenaSoft.SeriesList</RootNamespace>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net481</TargetFramework>
+		<Configurations>Debug</Configurations>
+		<ImplicitUsings>true</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>
+		<FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</FileVersion>
+		<ApplicationIcon>djdsoft.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="call copy.cmd bin\$(Configuration)\$(TargetFramework)" />
+	</Target>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SeriesListLib\SeriesListLib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="copy.cmd">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

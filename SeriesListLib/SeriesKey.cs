@@ -2,7 +2,7 @@
 
 namespace DoenaSoft.SeriesList;
 
-internal sealed class SeriesKey : Tuple<string>, IComparable<SeriesKey>
+public sealed class SeriesKey : Tuple<string>, IComparable<SeriesKey>
 {
     private static readonly IComparer<string> _comparer;
 

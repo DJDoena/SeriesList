@@ -1,37 +1,63 @@
-﻿using DoenaSoft.MediaInfoHelper.DataObjects.VideoMetaXml;
+﻿using System.Collections.Concurrent;
+using DoenaSoft.MediaInfoHelper.DataObjects.VideoMetaXml;
 using DoenaSoft.MediaInfoHelper.Helpers;
+using DoenaSoft.SeriesList.Xml;
 using DoenaSoft.ToolBox.Generics;
 
 namespace DoenaSoft.SeriesList;
 
-internal static class LanguageHelper
+public static class LanguageHelper
 {
-    internal static void EnrichLanguages(Xml.RootItem rootItem)
-    {
-        var seasons = (rootItem?.Series ?? Enumerable.Empty<Xml.Series>())
-            .SelectMany(s => s.Season ?? Enumerable.Empty<Xml.Season>());
+    private static readonly object _lock;
 
+    static LanguageHelper()
+    {
+        _lock = new();
+    }
+
+    public static void EnrichLanguages(Xml.RootItem rootItem)
+    {
+        var seasonsByDrive = (rootItem?.Series ?? [])
+            .SelectMany(s => s.Season ?? [])
+            .GroupBy(s => GetDrive(s.FullPath));
+
+        Parallel.ForEach(seasonsByDrive, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, GetLanguages);
+    }
+
+    private static void GetLanguages(IEnumerable<Season> seasons)
+    {
         foreach (var season in seasons)
         {
+            lock (_lock)
+            {
+                Console.WriteLine(season.FullPath);
+            }
+
             season.Languages = GetLanguages(season.FullPath);
         }
+    }
+
+    private static string GetDrive(string fullPath)
+    {
+        var split = fullPath.Split('\\');
+
+        return split[1];
     }
 
     private static string GetLanguages(string folder)
     {
         var files = Directory.GetFiles(folder, "*.xml", SearchOption.AllDirectories);
 
-        var tasks = new List<Task<List<string>>>(files.Length);
-
-        foreach (var file in files)
+        var languagesLists = new BlockingCollection<List<string>>();
+        Parallel.ForEach(files, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, file =>
         {
-            tasks.Add(Task.Run(() => TryAddLanguages(file)));
-        }
+            var subResult = TryAddLanguages(file);
 
-        Task.WaitAll(tasks.ToArray());
+            languagesLists.Add(subResult);
+        });
 
-        var languages = tasks
-            .SelectMany(t => t.Result)
+        var languages = languagesLists
+            .SelectMany(l => l)
             .StandardizeLanguage()
             .OrderBy(LanguageExtensions.GetLanguageWeight)
             .ToList();
