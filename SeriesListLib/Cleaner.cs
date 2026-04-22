@@ -3,7 +3,7 @@ using DoenaSoft.SeriesList.Xml;
 
 namespace DoenaSoft.SeriesList;
 
-public class Cleaner
+public sealed class Cleaner
 {
     private readonly SeriesListConfiguration _configuration;
 

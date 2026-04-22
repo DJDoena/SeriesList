@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace DoenaSoft.SeriesList;
 
-public class LanguageHelper
+public sealed class LanguageHelper
 {
     private readonly SeriesListConfiguration _configuration;
 
@@ -39,6 +39,7 @@ public class LanguageHelper
         var files = Directory.GetFiles(folder, "*.xml", SearchOption.AllDirectories);
 
         var languagesLists = new BlockingCollection<List<string>>();
+
         Parallel.ForEach(files, new ParallelOptions() { MaxDegreeOfParallelism = _configuration.MaxDegreeOfParallelism }, file =>
         {
             var subResult = TryAddLanguages(file);

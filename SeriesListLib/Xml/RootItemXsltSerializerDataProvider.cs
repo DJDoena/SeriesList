@@ -1,6 +1,6 @@
 ﻿using DoenaSoft.ToolBox.Generics;
 
-namespace DoenaSoft.SeriesList;
+namespace DoenaSoft.SeriesList.Xml;
 
 /// <summary>
 /// Provides XSLT serialization data for metadata XML documents.

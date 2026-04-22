@@ -1,7 +1,7 @@
 ﻿using DoenaSoft.SeriesList.Comparer;
-using DoenaSoft.SeriesList.Xml;
+using DoenaSoft.SeriesList.DataObjects;
 
-namespace DoenaSoft.SeriesList;
+namespace DoenaSoft.SeriesList.Xml;
 
 public static class XmlCreator
 {
@@ -12,7 +12,7 @@ public static class XmlCreator
         _comparer = new HumanComparer();
     }
 
-    public static RootItem Create(Dictionary<SeriesKey, List<SeriesValue>> source)
+    public static RootItem Create(ISeriesDictionary source)
     {
         var sortedSeries = source.ToList();
 
@@ -20,13 +20,13 @@ public static class XmlCreator
 
         var rootItem = new RootItem()
         {
-            Series = sortedSeries.Select(ToSeriesXml).ToList(),
+            Series = [.. sortedSeries.Select(ToSeriesXml)],
         };
 
         return rootItem;
     }
 
-    private static Series ToSeriesXml(KeyValuePair<SeriesKey, List<SeriesValue>> source)
+    private static Series ToSeriesXml(KeyValuePair<SeriesKey, SeriesValues> source)
     {
         var sortedSeasons = source.Value;
 
@@ -35,7 +35,7 @@ public static class XmlCreator
         var target = new Series()
         {
             Name = source.Key.SeriesName,
-            Season = sortedSeasons.Select(ToSeasonXml).ToList(),
+            Season = [.. sortedSeasons.Select(ToSeasonXml)],
         };
 
         return target;

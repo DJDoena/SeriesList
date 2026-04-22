@@ -1,9 +1,10 @@
-﻿using System.Collections.Concurrent;
-using DoenaSoft.SeriesList.Configuration;
+﻿using DoenaSoft.SeriesList.Configuration;
+using DoenaSoft.SeriesList.DataObjects;
+using System.Collections.Concurrent;
 
 namespace DoenaSoft.SeriesList;
 
-public class FolderGetter
+public sealed class FolderGetter
 {
     private readonly SeriesListConfiguration _configuration;
 
@@ -12,12 +13,13 @@ public class FolderGetter
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public Dictionary<SeriesKey, List<SeriesValue>> Get()
+    public ISeriesDictionary Get()
     {
-        var folderInfosLists = new BlockingCollection<List<KeyValuePair<SeriesKey, SeriesValue>>>();
+        var folderInfosLists = new BlockingCollection<IEnumerable<KeyValuePair<SeriesKey, SeriesValue>>>();
+
         Parallel.ForEach(_configuration.RootPaths, new ParallelOptions() { MaxDegreeOfParallelism = _configuration.MaxDegreeOfParallelism }, root =>
         {
-            var subResult = TryGet(root);
+            var subResult = this.TryGet(root);
 
             folderInfosLists.Add(subResult);
         });
@@ -26,7 +28,7 @@ public class FolderGetter
             .SelectMany(fi => fi)
             .ToList();
 
-        var folders = new Dictionary<SeriesKey, List<SeriesValue>>(folderInfos.Count);
+        var folders = new SeriesDictionary(folderInfos.Count);
 
         foreach (var folderInfo in folderInfos)
         {
@@ -43,10 +45,10 @@ public class FolderGetter
         return folders;
     }
 
-    private List<KeyValuePair<SeriesKey, SeriesValue>> TryGet(string root)
+    private IEnumerable<KeyValuePair<SeriesKey, SeriesValue>> TryGet(string root)
         => Directory.Exists(root)
-            ? [.. ExecuteGet(root)]
-            : new(0);
+            ? [.. this.ExecuteGet(root)]
+            : [];
 
     private IEnumerable<KeyValuePair<SeriesKey, SeriesValue>> ExecuteGet(string root)
     {
@@ -54,7 +56,7 @@ public class FolderGetter
 
         foreach (var folderName in folderNames)
         {
-            if (!ContainsSeasonPattern(folderName))
+            if (!this.ContainsSeasonPattern(folderName))
             {
                 continue;
             }

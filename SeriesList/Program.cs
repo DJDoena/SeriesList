@@ -1,5 +1,6 @@
 using DoenaSoft.SeriesList;
 using DoenaSoft.SeriesList.Configuration;
+using DoenaSoft.SeriesList.Xml;
 
 Console.WriteLine(typeof(Program).Assembly.GetName().Version);
 

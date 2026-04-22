@@ -1,6 +1,6 @@
 ﻿using DoenaSoft.SeriesList.Comparer;
 
-namespace DoenaSoft.SeriesList;
+namespace DoenaSoft.SeriesList.DataObjects;
 
 public sealed class SeriesKey : Tuple<string>, IComparable<SeriesKey>
 {
@@ -15,7 +15,8 @@ public sealed class SeriesKey : Tuple<string>, IComparable<SeriesKey>
     {
         _comparer = new HumanComparer();
     }
-    public SeriesKey(string seriesName
+
+    internal SeriesKey(string seriesName
         , IEnumerable<string> articlesToSkip)
         : base(seriesName)
     {

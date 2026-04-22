@@ -1,7 +1,6 @@
-﻿using DoenaSoft.SeriesList.Xml;
-using DoenaSoft.ToolBox.Generics;
+﻿using DoenaSoft.ToolBox.Generics;
 
-namespace DoenaSoft.SeriesList;
+namespace DoenaSoft.SeriesList.Xml;
 
 public static class Serializer
 {

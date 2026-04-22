@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
 
-namespace DoenaSoft.SeriesList;
+namespace DoenaSoft.SeriesList.DataObjects;
 
 [DebuggerDisplay("{Season}")]
-public sealed class SeriesValue
+public readonly struct SeriesValue
 {
     public string Season { get; }
 
     public string FullPath { get; }
 
-    public SeriesValue(string season, string fullPath)
+    internal SeriesValue(string season, string fullPath)
     {
         this.Season = season;
         this.FullPath = fullPath;
