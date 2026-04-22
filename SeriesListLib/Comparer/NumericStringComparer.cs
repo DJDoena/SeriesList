@@ -2,7 +2,6 @@
 
 public static class NumericStringComparer
 {
-
     public static int Compare(string left, string right)
     {
         var leftCleaned = RemoveLeadingZeros(left);

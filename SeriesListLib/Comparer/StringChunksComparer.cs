@@ -4,31 +4,18 @@ internal static class StringChunksComparer
 {
     public static int Compare(string left, string right)
     {
-        try
+        if (string.IsNullOrWhiteSpace(left) || string.IsNullOrWhiteSpace(right))
         {
-            if (string.IsNullOrWhiteSpace(left) || string.IsNullOrWhiteSpace(right))
-            {
-                return StandardStringComparer.Compare(left, right);
-            }
-
-            if (DateTime.TryParse(left, out DateTime leftTimestamp)
-                && DateTime.TryParse(right, out DateTime rightTimestamp))
-            {
-                return DateTime.Compare(leftTimestamp, rightTimestamp);
-            }
-
-            var leftChunks = GetChunks(left);
-
-            var rightChunks = GetChunks(right);
-
-            var result = CompareChunks(leftChunks, rightChunks);
-
-            return result;
+            return StandardStringComparer.Compare(left, right);
         }
-        catch
-        {
-            return ComparisonResults.LeftEqualsRight;
-        }
+
+        var leftChunks = GetChunks(left);
+
+        var rightChunks = GetChunks(right);
+
+        var result = CompareChunks(leftChunks, rightChunks);
+
+        return result;
     }
 
     private static int CompareChunks(List<string> leftChunks, List<string> rightChunks)
@@ -74,6 +61,11 @@ internal static class StringChunksComparer
 
     private static List<string> GetChunks(string input)
     {
+        if (string.IsNullOrEmpty(input))
+        {
+            return [];
+        }
+
         var result = new List<string>();
 
         var output = input.First().ToString();
@@ -107,5 +99,6 @@ internal static class StringChunksComparer
         return result;
     }
 
-    private static bool IsNumeric(string inputString) => char.IsNumber(inputString.First());
+    private static bool IsNumeric(string inputString)
+        => char.IsNumber(inputString.First());
 }
