@@ -10,6 +10,7 @@ try
     var configuration = new SeriesListConfiguration()
     {
         SeasonFolderPatterns = ["Season ", "Staffel "],
+        ArticlesToSkip = ["the", "a", "an", "der", "das"],
         RootPaths = [@"N:\Drive1\TVShows\", @"N:\Drive2\TVShows\", @"N:\Drive3\TVShows\", @"N:\Drive4\TVShows\"],
         MaxDegreeOfParallelism = 4,
         GetPathSegmentForGrouping = (fullPath) =>
@@ -17,6 +18,18 @@ try
             var split = fullPath.Split('\\');
 
             return split[1];
+        },
+        ExtractSeriesName = (fullPath) =>
+        {
+            var parts = fullPath.Split('\\');
+
+            return parts[parts.Length - 2]; // Parent folder is series name
+        },
+        ExtractSeasonName = (fullPath) =>
+        {
+            var parts = fullPath.Split('\\');
+
+            return parts[parts.Length - 1]; // Folder name is season name
         },
         CleanPath = (fullPath) =>
         {

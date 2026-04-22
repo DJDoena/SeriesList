@@ -63,11 +63,13 @@ public class FolderGetter
                 continue;
             }
 
-            var pathParts = folderName.Split('\\');
+            var seriesName = _configuration.ExtractSeriesName(folderName);
 
-            var key = new SeriesKey(pathParts[pathParts.Length - 2]);
+            var key = new SeriesKey(seriesName, _configuration.ArticlesToSkip);
 
-            var value = new SeriesValue(pathParts[pathParts.Length - 1], folderName);
+            var seasonName = _configuration.ExtractSeasonName(folderName);
+
+            var value = new SeriesValue(seasonName, folderName);
 
             yield return new(key, value);
         }
